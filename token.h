@@ -17,7 +17,7 @@ void lexer::numberProcess()
     {
         if(c=='.') number++;
         if(number>1) break;
-		r.next();
+        r.next();
     }
     if(number==1)
     {
@@ -48,7 +48,7 @@ void lexer::wordProcess()
         toToken(ID,i);
     }
 }
-/*处理单双运算符*/
+/*asfasfad*/
 void lexer::operatorProcess()
 {
     string s=""+r.getC()+r.getNext();

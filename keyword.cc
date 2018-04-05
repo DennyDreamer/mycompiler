@@ -13,7 +13,7 @@ using namespace std;
 #define SIZE            50
 static vector<string> keywordArray{"", "int" ,"char","float","bool","void","if","else","for","while","break","continue","return","include"};
 static vector<char> operatorArray{' ','+','-','*','/','&','|','!','>','<','>','=','<'};
-static vector<char> separationArray{' ','.','\'','\"','/','}','{','[',']',',',';','(',')','\\','#'};
+static vector<char> separationArray{' ','.','\'','\"','}','{','[',']',',',';','(',')','\\','#',':'};
 static vector<string> doubleOperator{"",">=","<=","==","!=",">>","<<","++","--"};
 
 
