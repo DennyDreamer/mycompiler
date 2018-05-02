@@ -1,0 +1,155 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<string>
+#include<string.h>
+#include"read.cc"
+#include<set>
+#include<algorithm>
+/* @视为空*/
+typedef std::vector<string> a_production;
+typedef std::vector<a_production> produciton;
+typedef std::set<string>  first_set;
+typedef std::set<string> follow_set;
+class cfg
+{
+    public:
+        map<string,produciton> C;
+        map<string,first_set> firstset;
+        map<string,follow_set> followset;
+        map<string,produciton>::iterator it;
+        vector<string> non_terminal;
+    private:
+        bool has_null(string s);
+        void read_cfg(string file);
+        void first_compute();
+        void follow_compute();
+        void non_terminal_seek();
+        bool is_non_terminal(string s);
+        first_set first_compute(string s);
+    public:
+        cfg(string file): C(){read_cfg(file);}
+};
+bool cfg::has_null(string s)
+{
+    if(is_non_terminal(s))
+    {
+        auto index=C[s].begin();
+        while(index!=C[s].end())
+        {
+            if((*index)[0]=="@") return 1;
+            else index++;
+        }
+        return 0;
+    }
+}
+
+bool  cfg::is_non_terminal(string s)
+{
+    auto index=std::find(non_terminal.begin(),non_terminal.end(),s);
+    if(index==non_terminal.end()) return 0;
+    else return 1;
+}
+void cfg::non_terminal_seek()
+{
+    it=C.begin();
+    while(it!=C.end())
+    {
+        non_terminal.push_back(it->first);
+    }
+}
+first_set cfg::first_compute(string s)
+{
+
+    if(is_non_terminal(s))
+    {
+        first_set fs();
+        vector<string>::iterator iter=C[s].bengin()
+        while(iter!=C[s].end())
+        {
+            int i=0;
+            while(true)
+            {
+                if(is_non_terminal(*iter[i]))
+                {
+                    if(has_null(*iter++))
+                    {
+                        first_set fs2=first_compute(*iter[i]);
+                    }
+                }
+            }
+
+
+
+        }
+
+
+}
+void cfg::first_compute()
+{
+    it=C.begin();
+    while(it!=C.end())
+    {
+        for(int i=0;i<it->second.size();i++)
+        {
+
+
+        }
+        it++;
+    }
+
+
+}
+void cfg::follow_compute()
+{
+
+}
+/* 读入文法*/
+void cfg::read_cfg(string file)
+{
+    read r(file);
+    while(!r.isOver())
+    {
+        string s=r.getWord();
+        string m=r.getWord();
+        if(strcmp(m.c_str(),"->")!=0) return;
+        produciton* p=&C[s];
+        a_production *ap=new vector<string>();
+        while(!r.isOver()&&r.getNext()!='\0')
+        {
+            s=r.getWord();
+            if(!strcmp(s.c_str(),";"))      break;
+            if(strcmp(s.c_str(),"->")==0) continue;
+            if(!strcmp(s.c_str(),"|"))
+            {
+                p->push_back(*ap);
+                ap=new vector<string>();
+            }
+            else ap->push_back(s);
+
+        }
+        p->push_back(*ap);
+        r.next();
+    }
+}
+
+/*测试*/
+int main()
+{
+    cfg c("context.txt");
+    c.it=c.C.begin();
+    while(c.it!=c.C.end())
+    {
+        std::cout<<c.it->first<<" "<<endl;
+        for(int i=0;i<c.it->second.size();i++)
+        {
+            for(int j=0;j<c.it->second[i].size();j++)
+            {
+                std::cout<< c.it->second[i][j]<<" ";
+            }
+            std::cout<<"|";
+        }
+        cout<<endl;
+        c.it++;
+    }
+}

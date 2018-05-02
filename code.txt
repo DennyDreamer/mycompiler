@@ -1,5 +1,32 @@
-#include<stdio.h>
-int main()
+int main(int number,char c)
 {
-    printf("hello world\n");
+    int j = 5;
+    char m = 'm';
+    int k=6;
+    int l=j+k;
+    for(i=0;i<5;i=i+1)
+    {
+        l=l+k;
+    }
+    if(i==0)
+    {
+        k=5;
+    }
+    else
+    {
+        k=6;
+    }
+    do
+    {
+        i=i*2;
+    }while(i<100);
+    switch(i)
+    {
+        case 1:
+            i=i+1;
+        case 2:
+            i=i+2;
+        default:
+            i=i+3;
+    }
 }

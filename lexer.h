@@ -61,11 +61,14 @@ private:
 	void toToken(int tag,string _type,string word,int row,int col);
 public:
    // vector<*property> fuhaobiao;
-    lexer(string file):tokenArray(),r(file){}
+    lexer(string file):tokenArray(),r(file),ID_list(){}
 	~lexer(){}
     vector<token>    tokenArray;
+	vector<string>   ID_list;
     void codeProcess();
+	vector<token> getToken();
 };
+vector<token> lexer::getToken(){return tokenArray;}
 bool lexer::isCharacter(char c)
 {
     if((c>='a'&& c<='z')||(c>='A'&&c<='Z')||c=='_') return 1;
@@ -148,11 +151,11 @@ void lexer::numberProcess()
     if(number==1)
     {
 
-        toToken(REAL,"REAL",s,r.getRow(),r.getCol());
+        toToken(REAL,"REAL","REAL",r.getRow(),r.getCol());
     }
     else if(number ==0)
     {
-        toToken(INT,"INT",s,r.getRow(),r.getCol());
+        toToken(INT,"INT","INT",r.getRow(),r.getCol());
     }
 }
 
@@ -175,7 +178,16 @@ void lexer::wordProcess()
     }
     else
     {
-        toToken(ID,"ID",s,r.getRow(),r.getCol());
+		auto  iter=ID_list.begin();
+		int i=0;
+		while(iter!=ID_list.end())
+		{
+			if((*iter)==s) break;
+			i++;
+			iter++;
+		}
+        toToken(ID,"ID","IDN",r.getRow(),r.getCol());
+		ID_list.push_back(s);
     }
 }
 /*处理单双运算符*/
@@ -203,8 +215,8 @@ void lexer::operatorProcess()
     }
     else
     {
-		r.next();
         toToken(r.getC(),"operator",s1,r.getRow(),r.getCol());
+		r.next();
     }
 
 }
@@ -219,7 +231,7 @@ void lexer::charProcess()
 		r.next();
 	}
 	r.next();
-	toToken(CHAR,"char",s,r.getRow(),r.getCol());
+	toToken(CHAR,"char","CHAR",r.getRow(),r.getCol());
 }
 void lexer::stringProcess()
 {

@@ -2,6 +2,7 @@
 #include<fstream>
 #include<iostream>
 #include<string>
+#include<string.h>
 using namespace std;
 class read
 {
@@ -12,17 +13,10 @@ private:
     {
         if(s[_index]=='\0')
         {
-            if(getline(in,s))
-            {
-                row++;
-                index=0;
-                col=1;
-
-                return getC();
-            }
-            else over=1;
+            nextLine();
+            return s[index];
         }
-        else return s[_index];
+        return s[_index];
     }
 public:
     string s;
@@ -41,8 +35,13 @@ public:
     }
     void nextLine()
     {
-        getline(in,s);
-        index=0;
+        if(getline(in,s))
+        {
+            row++;
+            index=0;
+            col=1;
+        }
+        else over=1;
     }
     bool isOver(){return over;}
     char getC(){return getC(index);}
@@ -51,5 +50,31 @@ public:
 
     int getRow(){return row;}
     int getCol(){return col;}
+    string getWord()
+    {
+        string ss;
+        while(getC()==' '&&getC()!=EOF)
+        {
+            next();
+        }
+        while(getC()!=' ')
+        {
+            if(over)  return "";
+            string s1(1,getC());
+            ss=ss+s1;
+            if(getNext()=='\0')
+            {
+                break;
+            }
+            else next();
+        }
+        return ss;
+    }
+    string readline()
+    {
+        string str=s;
+        nextLine();
+        return str;
+    }
 };
 

@@ -11,9 +11,9 @@ using namespace std;
 #define DOUBLEOPERATOR  261         /*符起始标号*/
 #define KEYWORD         300         /*关键字起始*/
 #define SIZE            50
-static vector<string> keywordArray{"", "int" ,"char","float","bool","void","if","else","for","while","break","continue","return","include"};
-static vector<char> operatorArray{' ','+','-','*','/','&','|','!','>','<','>','=','<'};
-static vector<char> separationArray{' ','.','\'','\"','}','{','[',']',',',';','(',')','\\','#',':'};
-static vector<string> doubleOperator{"",">=","<=","==","!=",">>","<<","++","--"};
+static vector<string> keywordArray{"", "int" ,"char","float","bool","void","if","else","for","while","break","continue","return","include","do","switch","case","default"};
+static vector<char> operatorArray{' ','+','-','*','/','!','>','<','='};
+static vector<char> separationArray{' ','.','\'','\"','}','{','[',']',',',';','(',')','\\','#',':','&'};
+static vector<string> doubleOperator{"",">=","<=","==","!=",">>","<<","++","--","&&","||"};
 
 
