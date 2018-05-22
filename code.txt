@@ -1,8 +1,13 @@
-int main(int number,char c)
+void  main(int number,char c)
 {
     int j = 5;
     char m = 'm';
     int k=6;
+    double p=1.6666;
+    float q=1.6666;
+    bool g=0;
+    short w=45;
+    long r=145646;
     int l=j+k;
     for(i=0;i<5;i=i+1)
     {
@@ -26,6 +31,14 @@ int main(int number,char c)
             i=i+1;
         case 2:
             i=i+2;
+        case 3:
+            i=i/2;
+        case 5:
+            i=i-6;
+        case 5:
+            i=i%6;
+        case 7:
+            i=i+5*6-7/(7+8);
         default:
             i=i+3;
     }

@@ -2,7 +2,7 @@ S
 S -> func funcs ;     函数和函数
 funcs -> func funcs | @ ; 函数和函数和组成
 func -> type IDN ( args ) func_body  ; 函数为 类型，函数名，参数列表，函数体组成
-type -> int | short | long | char | float | double | void | unsigned type ; 类型部分
+type -> int | short | long | char | float | double | void | unsigned type | bool ; 类型部分
 args -> type IDN arg  | @ ;  参数列表
 arg -> , type IDN arg  | @ ;
 func_body -> \; | block  ; 函数声明或函数体

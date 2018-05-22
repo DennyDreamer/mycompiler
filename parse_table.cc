@@ -5,23 +5,33 @@
 #include"cfg.cc"
 #include<set>
 /**/
+using std::vector;
+using std::string;
 struct item
 {
+    /*
+     * 增加一个数据结构用于寻找原产生式
+     */
+
     string reduce;
     a_production pro;
     int index;
     string next;
+    int cfg_index;
     string xu;
-    item(string _reduce,a_production _pro,int _index,string _next)
+    item(string _reduce,a_production _pro,int _index,int _cfg_index,string _next)
     {
+
         reduce=_reduce;
          pro=_pro;
          index=_index;
          next=_next;
+         cfg_index=_cfg_index;
          xu=reduce;
          for(auto &n:pro) xu=xu+n;
          xu=xu+next;
-         xu=xu+to_string(index);
+         xu=xu+std::to_string(cfg_index);
+         xu=xu+std::to_string(index);
     }
     bool operator<(const item& _i) const
     {
@@ -29,12 +39,13 @@ struct item
     }
     bool operator==(const item& _i) const
     {
-        if((this->reduce==_i.reduce)&&(this->pro==_i.pro)&&(this-> index==_i.index)&&(this->next==_i.next)) return 1;
-        else 0;
+        if((this->reduce==_i.reduce)&&(this->pro==_i.pro)&&(this-> index==_i.index)&&(this->next==_i.next)&&(this->cfg_index==_i.cfg_index))
+          return 1;
+        else  return 0;
     }
 };
 typedef vector<item> I_set;
-class parse_table : protected cfg
+class parse_table : public  cfg
 {
     private:
         typedef map<string,vector<int>> table;
@@ -44,7 +55,7 @@ class parse_table : protected cfg
         int  is_inIset(item _it,I_set is);
         bool conflict;
     public:
-        parse_table(string filename):cfg(filename),collection(),iset_family(){
+        parse_table(string filename):cfg(filename),iset_family(),collection(){
             conflict=0;
             items();
             //show();
@@ -75,7 +86,7 @@ void parse_table::showIset(I_set is)
 
 int parse_table::is_inIset(item _it,I_set is)
 {
-    for(int i=0;i<is.size();i++)
+    for(unsigned long  i=0;i<is.size();i++)
     {
         if(is[i]==_it) return i;
     }
@@ -83,20 +94,21 @@ int parse_table::is_inIset(item _it,I_set is)
 }
 I_set parse_table::closure(I_set iset)
 {
-    for(int i=0;i<iset.size();i++)
+    for(unsigned long  i=0;i<iset.size();i++)
     {
-        if(iset[i].pro.size()==iset[i].index) continue;
+        if(iset[i].pro.size()==static_cast<unsigned long>(iset[i].index)) continue;
         string symbol=iset[i].pro[iset[i].index];
         auto iter2=C[symbol].begin();
         a_production newpro((iset[i].pro.begin())+(iset[i].index+1),iset[i].pro.end());
         newpro.push_back(iset[i].next);
         first_set fs=pro_first(newpro);
-        while(iter2!=C[symbol].end())
+        //while(iter2!=C[symbol].end())
+        for (unsigned long i=0;i<C[symbol].size();i++)
         {
             auto iter3=fs.begin();
             while(iter3!=fs.end())
             {
-                item _item(symbol,*iter2,0,*iter3);
+                item _item(symbol,C[symbol][i],0,i,*iter3);
                 if((*iter2)[0]=="@") _item.index=1;
                 if(is_inIset(_item,iset)==-1)
                 {
@@ -116,8 +128,7 @@ I_set parse_table::GOTO(I_set _iset,string X)
     while(index!=_iset.end())
     {
         item i=*index;
-        if(i.pro.size()>i.index && i.pro[i.index]==X)
-        {
+        if(i.pro.size()>static_cast<unsigned long> (i.index) && i.pro[i.index]==X) {
             i.index++;
             if(is_inIset(i,iset)==-1) iset.push_back(i);
         }
@@ -128,7 +139,7 @@ I_set parse_table::GOTO(I_set _iset,string X)
 }
 int parse_table::is_incol(I_set is)
 {
-    for(int i=0;i<iset_family.size();i++ )
+    for(unsigned long  i=0;i<iset_family.size();i++ )
     {
         if(is==iset_family[i]) return i;
     }
@@ -147,14 +158,14 @@ void parse_table::items()
     //cout<<start<<endl;
     production pm{ap};
     C["end"]=pm;
-    item _i("end",ap,0,"#");
+    item _i("end",ap,0,0,"#");
     I0.push_back(_i);
     I0=closure(I0);
     std::sort(I0.begin(),I0.end());
     iset_family.push_back(I0);
     int j;
     I_set is;
-    for(int i=0;i<iset_family.size();i++)
+    for(unsigned long  i=0;i<iset_family.size();i++)
     {
         for(auto& n:T)
         {
@@ -174,31 +185,29 @@ void parse_table::items()
                     collection[i][n]+=std::to_string(iset_family.size()-1);
                 }
                 else
-                {
                     collection[i][n]+=std::to_string(j);
-                }
                // cout<<i<<"         "<<n<<"   "<< collection[i][n]<<endl;
             }
         }
     }
-    for(int i=0;i<iset_family.size();i++)
+    for(unsigned long  i=0;i<iset_family.size();i++)
     {
-        for(int j=0;j<iset_family[i].size();j++)
+        for(unsigned long  j=0;j<iset_family[i].size();j++)
         {
             item n=iset_family[i][j];
-            if(n.index==n.pro.size())
+            if(static_cast<unsigned long >(n.index)==n.pro.size())
             {
                 if(collection[i][n.next]!="") conflict=1;
                 if(n.pro[0]==start&&n.pro.size()==1) collection[i][n.next]+="accept";
-                else if(n.pro[0]=="@" && n.index==1) collection[i][n.next]+="r"+n.reduce+"0";
-                else collection[i][n.next]+="r"+n.reduce+std::to_string(n.pro.size());
+                else if(n.pro[0]=="@" && n.index==1) collection[i][n.next]+="r"+std::to_string(n.cfg_index)+n.reduce+"0";
+                else collection[i][n.next]+="r"+std::to_string(n.cfg_index)+n.reduce+std::to_string(n.pro.size());
             }
         }
     }
 }
 void parse_table::show()
 {
-    for(int i=0;i<iset_family.size();i++)
+    for(unsigned long  i=0;i<iset_family.size();i++)
     {
         cout<<i<<endl;
         showIset(iset_family[i]);

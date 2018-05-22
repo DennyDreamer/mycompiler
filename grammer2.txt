@@ -1,0 +1,29 @@
+S
+S -> define_stmts  stmts ;
+stmts -> stmt stmts | @ ;
+stmt -> assign_stmt | branch_stmt | iteration_stmt ;
+block_stmt -> { stmts } ;
+M -> @ ;
+define_stmt  -> type IDN \; ;
+define_stmts -> define_stmt define_stmts | @ ;
+type -> int | char | float | bool ; 类型部分
+const -> INT ;
+const -> REAL ;
+const -> CHAR ;
+factor -> const | ( expression ) | IDN  ;
+valueM_ -> opN factor valueM_ | @ ;
+valueM  -> factor valueM_ ;
+valueN_ -> opM valueM valueN_  | @ ;
+valueN ->  valueM valueN_ ;
+expression -> valueN operation ;
+operation -> compare_op valueN | @ ;
+opM -> + | - ; 优先级一
+opN -> * | / ; 优先级二
+assign_stmt -> IDN = expression \; ;
+compare_op -> == | >= | <= | > | < | != ;
+lop -> && | || ;
+bool_expression -> lop expression bool_expression | @ ;
+logical_expression -> expression bool_expression | ! expression bool_expression ;
+branch_stmt -> if ( logical_expression ) block_stmt result ;
+result -> else block_stmt | @ ;
+iteration_stmt -> do block_stmt while ( logical_expression ) \; ;

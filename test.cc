@@ -1,12 +1,15 @@
 #include<iostream>
 #include<string>
-#include"parser.cc"
+#include"semantic.cc"
 using namespace std;
 int  main()
 {
-    lexer L("code.txt");
+    string code;
+    string grammer;
+    std::cin>>code>>grammer;
+    lexer L(code);
 
     L.codeProcess();
-    LR_parse p(L.getToken(),"grammer.txt");
+    LR_parse p(L.getToken(),grammer);
     return 0;
 }

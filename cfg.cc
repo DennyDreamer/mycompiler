@@ -3,14 +3,14 @@
 #include<map>
 #include<string>
 #include<string.h>
-//#include"read.cc"
+#include"read.cc"
 #include<set>
 #include<algorithm>
 /* @视为空*/
 using namespace std;
 typedef std::vector<string> a_production;
-typedef std::vector<a_production> production;
-typedef std::set<string>  first_set;
+typedef vector<a_production> production;
+typedef set<string>  first_set;
 typedef std::set<string> follow_set;
 class cfg
 {
@@ -43,9 +43,9 @@ class cfg
             terminal_seek();
             first_compute();
             cout<<"非终结符"<<endl;
-            for(auto&n:non_terminal) cout<<n<<" ";
+            for(auto&n:non_terminal) cout<<n<<"00";
             cout<<endl<<"终结符"<<endl;
-            for(auto&n:terminal) cout<<n<<" ";
+            for(auto&n:terminal) cout<<n<<"11";
             cout<<endl;
             cout<<"first集"<<endl;
             auto it=firstset.begin();
@@ -153,11 +153,6 @@ void cfg::first_compute()
         it++;
     }//ok
 
-    for(auto&n:C)
-    {
-
-
-    }
     it=C.begin();
     int k=0;
     int number=0;
@@ -169,7 +164,7 @@ void cfg::first_compute()
         iter =(it->second).begin();
         while(iter!=(it->second).end())
         {
-            for(int i=0;i<(*iter).size();i++)
+            for(unsigned long  i=0;i<(*iter).size();i++)
             {
 
                 s1=(*iter)[i];

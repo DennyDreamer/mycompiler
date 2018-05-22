@@ -1,5 +1,7 @@
-#pragma
+#ifndef COMPILER_READ
+#define COMPILER_READ
 #include<fstream>
+
 #include<iostream>
 #include<string>
 #include<string.h>
@@ -77,4 +79,4 @@ public:
         return str;
     }
 };
-
+#endif

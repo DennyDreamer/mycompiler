@@ -14,19 +14,35 @@ using namespace std;
 
 /**字母表,单词表，用于检测读入字符**/
 /*token*/
-struct token
+class token
 {
+public:
 	int     row;            /*行号*/
 	int 	col;            /*列号*/
-    int    	tag;
+    string 	name;
 	string value;
-    token(int _tag,int _row,int _col,string _value)
+    token(string _name,int _row,int _col,string _value)
     {
 		row=_row;
 		col=_col;
 		value=_value;
-        tag=_tag;
+        name=_name;
     }
+	token()
+	{
+		row=0;
+		col=0;
+		value="";
+		name="";
+	}
+	token& operator=(const token & t)
+	{
+		row=t.row;
+		col=t.col;
+		name=t.name;
+		value=t.value;
+		return *this;
+	}
 };
 
 
@@ -58,7 +74,7 @@ private:
 	void charProcess();
 	void separationProcess();
 	void noteProcess(bool type);
-	void toToken(int tag,string _type,string word,int row,int col);
+	void toToken(string name,string _type,string word,int row,int col);
 public:
    // vector<*property> fuhaobiao;
     lexer(string file):tokenArray(),r(file),ID_list(){}
@@ -82,7 +98,7 @@ bool lexer::isNumber(char c)
 }
 int lexer::isKeyWord(string s)
 {
-    for(int i=1;i<keywordArray.size();i++)
+    for(size_t i=1;i<keywordArray.size();i++)
     {
         if(!strcmp(s.c_str(),keywordArray[i].c_str())) return i;
     }
@@ -91,7 +107,7 @@ int lexer::isKeyWord(string s)
 }
 bool lexer::isOperator(char c)
 {
-    for (int i=0;i<operatorArray.size();i++)
+    for (size_t i=0;i<operatorArray.size();i++)
     {
         if(operatorArray[i]==c) return 1;
 	}
@@ -100,7 +116,8 @@ bool lexer::isOperator(char c)
 
 bool lexer::isSeparation(char c)
 {
-    for(int i=0;i<separationArray.size();i++)
+
+    for(size_t i=0;i<separationArray.size();i++)
     {
       if(separationArray[i]==c) return 1;
     }
@@ -123,16 +140,16 @@ void lexer::codeProcess()
 									 noteProcess(1);
 		else if(c=='/'&&r.getNext()=='*')
 									 noteProcess(0);
-		else if(isSeparation(c))     separationProcess();
 		else if(isOperator(c))       operatorProcess();
+		else if(isSeparation(c))     separationProcess();
 	}
 
 }
-void lexer::toToken(int tag,string _type,string word,int row,int col)
+void lexer::toToken(string  name,string _type,string word,int row,int col)
 {
-    token T(tag,row,col,word);
+    token T(name,row,col,word);
     tokenArray.push_back(T);
-    cout<<row<<"  "<<col<<"  "<<tag<<" "<<word<<"               "<<_type<<endl;
+    cout<<row<<"  "<<col<<"  "<<name<<" "<<word<<"               "<<_type<<endl;
 }
 void lexer::numberProcess()
 {
@@ -174,7 +191,7 @@ void lexer::wordProcess()
 	_index=isKeyWord(s);
     if(_index!=0)
     {
-        toToken(KEYWORD+_index,"KEYWORD",s,r.getRow(),r.getCol());
+        toToken(KEYWORD,"KEYWORD",s,r.getRow(),r.getCol());
     }
     else
     {
@@ -186,7 +203,7 @@ void lexer::wordProcess()
 			i++;
 			iter++;
 		}
-        toToken(ID,"ID","IDN",r.getRow(),r.getCol());
+        toToken(s,"ID","IDN",r.getRow(),r.getCol());
 		ID_list.push_back(s);
     }
 }
@@ -196,8 +213,8 @@ void lexer::operatorProcess()
     string s1(1,r.getC());
 	string s2(1,r.getNext());
 	string s=s1+s2;
-    bool type=0,m=0;
-	int i=0;
+    bool type=0;
+	unsigned long  i=0;
     for(i=0;i<doubleOperator.size();i++)
     {
 
@@ -211,11 +228,11 @@ void lexer::operatorProcess()
     {
 		r.next();
 		r.next();
-        toToken(DOUBLEOPERATOR+i,"doubleOperatir",s,r.getRow(),r.getCol());
+        toToken(DOUBLEOPERATOR,"doubleOperatir",s,r.getRow(),r.getCol());
     }
     else
     {
-        toToken(r.getC(),"operator",s1,r.getRow(),r.getCol());
+        toToken("","operator",s1,r.getRow(),r.getCol());
 		r.next();
     }
 
@@ -268,6 +285,6 @@ void lexer::noteProcess(bool type)
 void lexer::separationProcess()
 {
 	string s(1,r.getC());
-	toToken(r.getC(),"separation",s,r.getRow(),r.getCol());
+	toToken("","separation",s,r.getRow(),r.getCol());
 	r.next();
 }
